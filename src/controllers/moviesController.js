@@ -42,22 +42,82 @@ const moviesController = {
             });
     }, //Aqui debemos modificar y completar lo necesario para trabajar con el CRUD
     add: function (req, res) {
-        // TODO   
+        res.render("moviesAdd")
     },
     create: function (req, res) {
-        // TODO
+        Movies.create(req.body)
+        .then(movie=>{
+            res.redirect('/movies')
+        })
+        .catch(error=>{
+            console.log(error)
+        })
     },
     edit: function(req, res) {
-        // TODO
+        Movies.findByPk(req.params.id)
+        .then(movie=>{
+            if(movie){
+                res.render('moviesEdit',{Movie:movie})
+                
+            }else{
+                res.send("no existe esa pelicula")
+            }
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+        
     },
     update: function (req,res) {
-        // TODO
+        Movies.update(
+            {
+                title:req.body.title,
+                rating:req.body.rating,
+                awards:req.body.awards,
+                release_date:req.body.release_date,
+                length:req.body.length
+            },
+            {
+                where:{id:req.params.id}
+            }
+        )
+        .then(movie=>{
+            if(movie[0]!==0){
+                res.redirect(`/movies/detail/${req.params.id}`)
+            }else{
+                res.send("no hay nada para modificar")
+            }
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+        
     },
     delete: function (req, res) {
-        // TODO
+        Movies.findByPk(req.params.id)
+        .then(movie=>{
+            if(movie){
+                res.render('moviesDelete',{Movie:movie})
+                
+            }else{
+                res.send("no existe esa pelicula")
+            }
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+        
     },
     destroy: function (req, res) {
-        // TODO
+        Movies.destroy({
+            where:{id:req.params.id}
+        })
+        .then(movie=>{
+            res.redirect('/movies')
+        })
+        .catch(error=>{
+            res.send(error)
+        })
     }
 
 }
